@@ -8,7 +8,7 @@ locals {
     }
   }
 
-  install_rsat_command = "Install-WindowsFeature RSAT-ADDS -IncludeAllSubFeature -Restart"
+  install_rsat_command = "Install-WindowsFeature -Name AD-Domain-Services -IncludeManagementTools"
   import_command       = "Import-Module ADDSDeployment"
   password_command     = "$password = ConvertTo-SecureString ${var.admin_password == null ? element(concat(random_password.passwd.*.result, [""]), 0) : var.admin_password} -AsPlainText -Force"
   install_ad_command   = "Install-WindowsFeature -Name AD-Domain-Services,DNS -IncludeManagementTools"
