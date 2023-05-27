@@ -3,12 +3,12 @@ provider "azurerm" {
 }
 
 resource "azurerm_resource_group" "vnet_hub" {
-  name     = "vnet-hub-${var.azure_region}"
+  name     = "rg-vnet-hub-${var.region_shortname}"
   location = var.azure_region
 }
 
 resource "azurerm_virtual_network" "vnet_hub" {
-  name                = "vnet-hub-${var.azure_region}"
+  name                = "vnet-hub-${var.region_shortname}"
   location            = var.azure_region
   resource_group_name = azurerm_resource_group.vnet_hub.name
 
@@ -34,7 +34,6 @@ module "azure_dc" {
   subnet_name          = "adSubnet"
 
   region_shortname                   = var.region_shortname
-  virtual_machine_name               = "hub-dc-${substr(var.azure_region, 0, 5)}"
   windows_distribution_name          = "windows2019dc"
   os_flavor                          = "windows"
   virtual_machine_size               = var.dc_virtual_machine_size
