@@ -33,6 +33,7 @@ module "azure_dc" {
   virtual_network_name = azurerm_virtual_network.vnet_hub.name
   subnet_name          = "adSubnet"
 
+  region_shortname                   = var.region_shortname
   virtual_machine_name               = "hub-dc-${substr(var.azure_region, 0, 5)}"
   windows_distribution_name          = "windows2019dc"
   os_flavor                          = "windows"
