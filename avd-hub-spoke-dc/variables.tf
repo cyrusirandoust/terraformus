@@ -40,3 +40,8 @@ variable "dc_ad_netbios_name" {
   description = "(Required) NETBIOS name for the Hub DC"
   type        = string
 }
+
+variable "admin_password" {
+  description = "The admin password for the module azure_dc"
+  type        = string
+}

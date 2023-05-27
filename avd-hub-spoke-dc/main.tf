@@ -33,7 +33,7 @@ module "azure_dc" {
   virtual_network_name = azurerm_virtual_network.vnet_hub.name
   subnet_name          = "adSubnet"
 
-  virtual_machine_name               = "hub-dc-${var.azure_region}"
+  virtual_machine_name               = "hub-dc-${substr(var.azure_region, 0, 5)}"
   windows_distribution_name          = "windows2019dc"
   os_flavor                          = "windows"
   virtual_machine_size               = var.dc_virtual_machine_size
@@ -41,6 +41,8 @@ module "azure_dc" {
   private_ip_address_allocation_type = "Static"
   private_ip_address                 = [var.dc_private_ip_address]
   enable_public_ip_address           = true
+
+  admin_password = var.admin_password
 
   # Active Directory domain and netbios details
   # Intended for test/demo purposes
