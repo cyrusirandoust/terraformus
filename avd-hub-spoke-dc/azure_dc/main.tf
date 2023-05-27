@@ -10,7 +10,7 @@ locals {
 
   install_rsat_command = "Install-WindowsFeature -Name AD-Domain-Services -IncludeManagementTools"
   import_command       = "Import-Module ADDSDeployment"
-  password_command     = "$password = ConvertTo-SecureString ${var.admin_password == null ? element(concat(random_password.passwd.*.result, [""]), 0) : var.admin_password} -AsPlainText -Force"
+  password_command     = "$password = ConvertTo-SecureString ${chomp(replace(var.admin_password == null ? element(concat(random_password.passwd.*.result, [""]), 0) : var.admin_password, "$", "$$$`$", "\\", "\\\\"))} -AsPlainText -Force"
   install_ad_command   = "Install-WindowsFeature -Name AD-Domain-Services,DNS -IncludeManagementTools"
   configure_ad_command = "Install-ADDSForest -CreateDnsDelegation:$false -DomainMode Win2016 -DomainName ${var.active_directory_domain} -DomainNetbiosName ${var.active_directory_netbios_name} -ForestMode Win2016 -InstallDns:$true -SafeModeAdministratorPassword $password -Force:$true"
   shutdown_command     = "Start-Sleep -s 120; shutdown -r -t 60"
