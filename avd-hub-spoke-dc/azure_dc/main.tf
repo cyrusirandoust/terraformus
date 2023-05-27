@@ -8,13 +8,14 @@ locals {
     }
   }
 
+  install_rsat_command = "Install-WindowsFeature RSAT-ADDS"
   import_command       = "Import-Module ADDSDeployment"
   password_command     = "$password = ConvertTo-SecureString ${var.admin_password == null ? element(concat(random_password.passwd.*.result, [""]), 0) : var.admin_password} -AsPlainText -Force"
   install_ad_command   = "Install-WindowsFeature -Name AD-Domain-Services,DNS -IncludeManagementTools"
   configure_ad_command = "Install-ADDSForest -CreateDnsDelegation:$false -DomainMode Win2016 -DomainName ${var.active_directory_domain} -DomainNetbiosName ${var.active_directory_netbios_name} -ForestMode Win2016 -InstallDns:$true -SafeModeAdministratorPassword $password -Force:$true"
   shutdown_command     = "shutdown -r -t 60"
   exit_code_hack       = "exit 0"
-  powershell_command   = "${local.import_command}; ${local.password_command}; ${local.install_ad_command}; ${local.configure_ad_command}; ${local.shutdown_command}; ${local.exit_code_hack}"
+  powershell_command   = "${local.install_rsat_command}; ${local.import_command}; ${local.password_command}; ${local.install_ad_command}; ${local.configure_ad_command}; ${local.shutdown_command}; ${local.exit_code_hack}"
 }
 
 #----------------------------------------------------------
