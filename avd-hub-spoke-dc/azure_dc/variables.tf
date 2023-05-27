@@ -176,8 +176,3 @@ variable "region_shortname" {
   description = "The short name of the Azure region"
   type        = string
 }
-
-variable "region_shortname" {
-  description = "The short name of the Azure region"
-  type        = string
-}
