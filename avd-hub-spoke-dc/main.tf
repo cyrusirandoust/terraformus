@@ -5,12 +5,14 @@ provider "azurerm" {
 resource "azurerm_resource_group" "vnet_hub" {
   name     = "rg-vnet-hub-${var.region_shortname}"
   location = var.azure_region
+  tags     = var.common_tags
 }
 
 resource "azurerm_virtual_network" "vnet_hub" {
   name                = "vnet-hub-${var.region_shortname}"
   location            = var.azure_region
   resource_group_name = azurerm_resource_group.vnet_hub.name
+  tags                = var.common_tags
 
   address_space = [var.vnet_hub_address_space]
   dns_servers   = [var.dc_private_ip_address]

@@ -23,7 +23,6 @@ locals {
 #----------------------------------------------------------
 data "azurerm_resource_group" "rg" {
   name = var.resource_group_name
-  tags = merge(var.common_tags, var.tags)
 }
 
 data "azurerm_virtual_network" "vnet" {
