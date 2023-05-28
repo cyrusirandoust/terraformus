@@ -57,6 +57,6 @@ variable "common_tags" {
   default     = {
     "CostCenter"  = "CyrusAcademy"
     "ENV"         = "DEV"
-    "Project"     = "AVD-IBM"
+    "Project"     = "AVD"
   }
 }
