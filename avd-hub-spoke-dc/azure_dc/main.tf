@@ -23,11 +23,13 @@ locals {
 #----------------------------------------------------------
 data "azurerm_resource_group" "rg" {
   name = var.resource_group_name
+  tags = merge(var.common_tags, var.tags)
 }
 
 data "azurerm_virtual_network" "vnet" {
   name                = var.virtual_network_name
   resource_group_name = data.azurerm_resource_group.rg.name
+  tags = merge(var.common_tags, var.tags)
 }
 
 data "azurerm_subnet" "snet" {
@@ -70,7 +72,7 @@ resource "azurerm_public_ip" "pip" {
   allocation_method   = "Static"
   sku                 = "Standard"
   domain_name_label   = format("%s%s", lower(replace(var.virtual_machine_name, "/[[:^alnum:]]/", "")), random_string.str[count.index].result)
-  tags                = merge({ "ResourceName" = lower("pip-vm-${var.virtual_machine_name}-${data.azurerm_resource_group.rg.location}-0${count.index + 1}") }, var.tags, )
+  tags                = merge(var.common_tags, var.tags)
 }
 
 #---------------------------------------
@@ -84,7 +86,7 @@ resource "azurerm_network_interface" "nic" {
   dns_servers                   = var.dns_servers
   enable_ip_forwarding          = var.enable_ip_forwarding
   enable_accelerated_networking = var.enable_accelerated_networking
-  tags                          = merge({ "ResourceName" = var.instances_count == 1 ? lower("nic-${format("vm%s", lower(replace(var.virtual_machine_name, "/[[:^alnum:]]/", "")))}") : lower("nic-${format("vm%s%s", lower(replace(var.virtual_machine_name, "/[[:^alnum:]]/", "")), count.index + 1)}") }, var.tags, )
+  tags                          = merge(var.common_tags, var.tags)
 
   ip_configuration {
     name                          = lower("ipconig-${format("vm%s%s", lower(replace(var.virtual_machine_name, "/[[:^alnum:]]/", "")), count.index + 1)}")
@@ -104,7 +106,7 @@ resource "azurerm_availability_set" "aset" {
   platform_fault_domain_count  = var.platform_fault_domain_count
   platform_update_domain_count = var.platform_update_domain_count
   managed                      = true
-  tags                         = merge({ "ResourceName" = lower("avail-${var.virtual_machine_name}-${data.azurerm_resource_group.rg.location}") }, var.tags, )
+  tags                         = merge(var.common_tags, var.tags)
 }
 
 #---------------------------------------------------------------
@@ -114,7 +116,7 @@ resource "azurerm_network_security_group" "nsg" {
   name                = lower("nsg_${var.virtual_machine_name}_${data.azurerm_resource_group.rg.location}_in")
   resource_group_name = data.azurerm_resource_group.rg.name
   location            = data.azurerm_resource_group.rg.location
-  tags                = merge({ "ResourceName" = lower("nsg_${var.virtual_machine_name}_${data.azurerm_resource_group.rg.location}_in") }, var.tags, )
+  tags                = merge(var.common_tags, var.tags)
 }
 
 resource "azurerm_network_security_rule" "nsg_rule" {
@@ -159,7 +161,7 @@ resource "azurerm_windows_virtual_machine" "win_vm" {
   dedicated_host_id          = var.dedicated_host_id
   license_type               = var.license_type
   availability_set_id        = var.enable_vm_availability_set == true ? element(concat(azurerm_availability_set.aset.*.id, [""]), 0) : null
-  tags                       = merge({ "ResourceName" = var.instances_count == 1 ? var.virtual_machine_name : format("%s%s", lower(replace(var.virtual_machine_name, "/[[:^alnum:]]/", "")), count.index + 1) }, var.tags, )
+  tags                       = merge(var.common_tags, var.tags)
 
   dynamic "source_image_reference" {
     for_each = var.source_image_id != null ? [] : [1]

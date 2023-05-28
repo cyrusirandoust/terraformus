@@ -176,3 +176,8 @@ variable "region_shortname" {
   description = "The short name of the Azure region"
   type        = string
 }
+
+variable "common_tags" {
+  description = "Common tags to be applied to all resources"
+  type        = map(string)
+}
