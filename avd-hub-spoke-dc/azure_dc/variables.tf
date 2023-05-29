@@ -172,6 +172,11 @@ variable "tags" {
   default     = {}
 }
 
+variable "environment" {
+  description = "Environment variable. can be dev, qa or prod"
+  type        = string
+}
+
 variable "region_shortname" {
   description = "The short name of the Azure region"
   type        = string

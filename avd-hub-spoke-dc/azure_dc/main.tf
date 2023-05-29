@@ -64,7 +64,7 @@ resource "random_string" "str" {
 #-----------------------------------
 resource "azurerm_public_ip" "pip" {
   count               = var.enable_public_ip_address == true ? var.instances_count : 0
-  name                = lower("pip-vm-${var.virtual_machine_name}-${data.azurerm_resource_group.rg.location}-0${count.index + 1}")
+  name                = format("pip-%s-hub-dc-%s%02d", var.environment, var.region_shortname, count.index + 1)
   location            = data.azurerm_resource_group.rg.location
   resource_group_name = data.azurerm_resource_group.rg.name
   allocation_method   = "Static"
@@ -78,7 +78,7 @@ resource "azurerm_public_ip" "pip" {
 #---------------------------------------
 resource "azurerm_network_interface" "nic" {
   count                         = var.instances_count
-  name                          = var.instances_count == 1 ? lower("nic-${format("vm%s", lower(replace(var.virtual_machine_name, "/[[:^alnum:]]/", "")))}") : lower("nic-${format("vm%s%s", lower(replace(var.virtual_machine_name, "/[[:^alnum:]]/", "")), count.index + 1)}")
+  name                          = format("nic-%s-hub-dc-%s%02d", var.environment, var.region_shortname, count.index + 1)
   resource_group_name           = data.azurerm_resource_group.rg.name
   location                      = data.azurerm_resource_group.rg.location
   dns_servers                   = var.dns_servers
@@ -87,7 +87,7 @@ resource "azurerm_network_interface" "nic" {
   tags                          = merge(var.common_tags, var.tags)
 
   ip_configuration {
-    name                          = lower("ipconig-${format("vm%s%s", lower(replace(var.virtual_machine_name, "/[[:^alnum:]]/", "")), count.index + 1)}")
+    name                          = format("ipconfig-%s-hub-dc-%s-%02d", var.environment, var.region_shortname, count.index + 1)
     primary                       = true
     subnet_id                     = data.azurerm_subnet.snet.id
     private_ip_address_allocation = var.private_ip_address_allocation_type
@@ -111,7 +111,7 @@ resource "azurerm_availability_set" "aset" {
 # Network security group for Virtual Machine Network Interface
 #---------------------------------------------------------------
 resource "azurerm_network_security_group" "nsg" {
-  name                = lower("nsg_${var.virtual_machine_name}_${data.azurerm_resource_group.rg.location}_in")
+  name                = format("nsg-%s-hub-dc-%s-in", var.environment, var.region_shortname)
   resource_group_name = data.azurerm_resource_group.rg.name
   location            = data.azurerm_resource_group.rg.location
   tags                = merge(var.common_tags, var.tags)
@@ -145,8 +145,8 @@ resource "azurerm_network_interface_security_group_association" "nsgassoc" {
 #---------------------------------------
 resource "azurerm_windows_virtual_machine" "win_vm" {
   count                      = var.os_flavor == "windows" ? var.instances_count : 0
-  name                       = var.instances_count == 1 ? format("hub-dc-%s01", var.region_shortname) : format("hub-dc-%s%02d", var.region_shortname, count.index + 1)
-  computer_name              = var.instances_count == 1 ? format("hub-dc-%s01", var.region_shortname) : format("hub-dc-%s%02d", var.region_shortname, count.index + 1) # not more than 15 characters
+  name                       = format("vm-dc-%s%02d", var.environment, count.index + 1)
+  computer_name              = format("vm-dc-%s%02d", var.environment, count.index + 1) # not more than 15 characters
   resource_group_name        = data.azurerm_resource_group.rg.name
   location                   = data.azurerm_resource_group.rg.location
   size                       = var.virtual_machine_size

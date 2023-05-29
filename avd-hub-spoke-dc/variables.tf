@@ -46,6 +46,11 @@ variable "admin_password" {
   type        = string
 }
 
+variable "environment" {
+  description = "Environment variable. can be dev, qa or prod"
+  type        = string
+}
+
 variable "region_shortname" {
   description = "The short name of the Azure region"
   type        = string
@@ -56,7 +61,7 @@ variable "common_tags" {
   type        = map(string)
   default     = {
     "CostCenter"  = "CyrusAcademy"
-    "ENV"         = "DEV"
+    "Env"         = "dev"
     "Project"     = "AVD"
   }
 }
