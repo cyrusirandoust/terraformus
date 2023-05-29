@@ -29,7 +29,9 @@ resource "azurerm_subnet" "subnets" {
 
 module "azure_dc" {
   source = "./azure_dc"
+  
   common_tags = var.common_tags
+  environment = var.environment
 
   resource_group_name  = azurerm_resource_group.vnet_hub.name
   location             = azurerm_resource_group.vnet_hub.location
